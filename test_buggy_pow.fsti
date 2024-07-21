@@ -1,0 +1,1 @@
+val shift_left: v:int -> x:nat -> (res:int{res = v * (pow2_buggy x)})
