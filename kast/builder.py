@@ -202,7 +202,7 @@ class astGenPass(tlangVisitor):
 
     # Visit a parse tree produced by tlangParser#lemma.
     def visitLemma(self, ctx:tlangParser.LemmaContext):
-        print('Visiting Lemma:', ctx.getText())
+        # print('Visiting Lemma:', ctx.getText())
         require = self.visit(ctx.condition(0))
         if ctx.condition(1): 
             ensure = self.visit(ctx.condition(1))

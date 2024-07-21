@@ -119,6 +119,7 @@ def validate_tests(signame, test_input_dir, bench_file):
                     violation_list.append(test_file)
 
                 if "BatUChar.Out_of_range" in file_content and signame == "string_of_int":
+                    # this check is only for the old fstar version
                     external_violation.append(test_file)
 
                 if "Out of memory" in file_content and signame == "shift_left":

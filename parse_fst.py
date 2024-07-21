@@ -12,9 +12,9 @@ def get_cbfun_libs(bench):
         lines = file.readlines()
         starfuzz_lines = [line for line in lines if line.startswith('@starfuzz')]
         for line in starfuzz_lines:
-            print(line.strip())
+            # print(line.strip())
             libinfo = line.strip().split(':')
-            print(libinfo)
+            # print(libinfo)
             funname, libname = libinfo[1].strip().split(' ')
             libname = libname.strip('[').strip(']')
             print("Function name: {}, Lib name: {}".format(funname, libname))
@@ -32,12 +32,10 @@ def get_cb_specs(bench, cbfuns):
             line = line.strip()
             for cb in cbfuns:
                 if line.startswith('val {}'.format(cb)):
-                    print("Found spec for  {}:: {}".format(cb, line))
+                    # print("Found spec for  {}:: {}".format(cb, line))
                     cb_specs[cb] = line
                     break
 
-    # spec_not_found = [cb for cb in cbfuns if cb not in cb_specs.keys()]
-    # if spec_not_found: print("\033[93mSpec not found for: {}\033[0m".format(spec_not_found))
     return cb_specs
 
 def parse_fst(bench):

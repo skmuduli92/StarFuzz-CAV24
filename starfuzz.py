@@ -10,7 +10,7 @@ import glob
 ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
-def print_table(status_map):
+def print_table(status_map, save_to_file=False):
     table = PrettyTable()
     table.field_names = ["Spec", "Status"]
 
@@ -26,9 +26,14 @@ def print_table(status_map):
         
         table.add_row([spec, status])
 
-    # save table as text file
-    with open("result_table.txt", "w") as f:
-        f.write(str(table))
+    if not save_to_file:
+        print("\nResults:")
+        print(table)
+    else:    
+        # save table as text file
+        with open("result_table.txt", "w") as f:
+            f.write(str(table))
+        print("Results saved to 'result_table.txt'")
 
     
 def run_bench(bench_file, options):
@@ -38,7 +43,6 @@ def run_bench(bench_file, options):
     for k, v in specmap.items():
         _, status = sp.sadhak_main(v, bench_file, options)
         # format_ocaml_code(outfile)
-        print(f"Status for {k}: {status}")
         if status != 0: break;
     
     status_map[os.path.basename(bench_file)] = status
@@ -46,7 +50,7 @@ def run_bench(bench_file, options):
 
 def smoke_test(options):
     status_map = {}
-    sample_tests = ['benchmarks/b1.fst', 'benchmarks/b22.fst']
+    sample_tests = ['benchmarks/1.fst', 'benchmarks/22.fst']
     for test in sample_tests:
         print("Running test: ", test)
         temp_map = run_bench(test, options)
@@ -64,24 +68,18 @@ def full_bench(options):
         temp_map = run_bench(test, options)
         status_map.update(temp_map)
     
-    print_table(status_map)
+    print_table(status_map, save_to_file=True)
     print("Full test completed.")
 
 if __name__ == '__main__':
     cmdparser = optparse.OptionParser(description='StarFuzz tool for fuzzing Fstar specs.')
 
-    cmdparser.add_option('--spec', help='input file')
-    cmdparser.add_option('--batch', help='batch mode')
     cmdparser.add_option('--bench', help='benchmark file')
     cmdparser.add_option('--fuzz_tout', type=int, default=5, help='fuzz timeout value in seconds')
-
     cmdparser.add_option('--smoke_test', action='store_true', help='run smoke test')
     cmdparser.add_option('--full_bench', action='store_true', help='run full test')
 
-    # TODO: validaiton is on by default, turn it off if needed
-    cmdparser.add_option('--validation-off', action='store_true', help='turn off validation')
     (options, args) = cmdparser.parse_args()
-
 
     if options.smoke_test:
         smoke_test(options)
@@ -97,18 +95,9 @@ if __name__ == '__main__':
         exit(0)
     
 
-    # if any two of the arguments are provided from spec, batch, bench, then exit
-    if sum([bool(options.spec), bool(options.batch), bool(options.bench)]) != 1:
-        print("Please provide one of --spec, --batch, --bench")
-        cmdparser.print_help()
-        exit(1)
+    if options.bench: 
+        run_bench(options.bench, options)
+        exit(0)
 
-    if options.bench: run_bench(options.bench, options)       
-    elif options.batch:
-        infile = os.path.abspath(options.batch)
-        sp.sadhak_batch(infile, options)
-    elif options.spec:
-        outfile = sp.sadhak_main(options.spec, options)
-    else:
-        cmdparser.print_help()
-        exit(1)
+    cmdparser.print_help()
+    exit(1)

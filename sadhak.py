@@ -99,8 +99,8 @@ def gen_ocaml_target(input_string, bench_file):
     astgen.signame = signame
 
     reflist, lemma = astgen.visitStart(parseTree)
-    ocamlgen.pretty_print(reflist)
-    print(f'Lemma: {lemma}')
+    # ocamlgen.pretty_print(reflist)
+    # print(f'Lemma: {lemma}')
 
     outfile = signame + '.ml'
     ocamlgen.dump_ocaml_target(reflist, astgen, outfile)
